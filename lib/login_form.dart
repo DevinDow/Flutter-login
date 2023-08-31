@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:email_validator/email_validator.dart';
 
@@ -16,44 +17,52 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: <Widget>[
-          TextFormField(
-            decoration: const InputDecoration(labelText: 'Email'),
-            keyboardType: TextInputType.emailAddress,
-            onChanged: (value) => setState(() => _email = value.trim()),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your email';
-              } else if (!EmailValidator.validate(value)) {
-                return 'Please enter a valid email';
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            decoration: const InputDecoration(labelText: 'Password'),
-            obscureText: true,
-            onChanged: (value) => setState(() => _password = value.trim()),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your password';
-              }
-              return null;
-            },
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                // Process login data
-                print('Email: $_email, Password: $_password');
-              }
-            },
-            child: const Text('Submit'),
-          ),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Password Autofill"),
+        backgroundColor: Colors.deepPurpleAccent,
+      ),
+      body: Container(
+        padding: EdgeInsets.all(30),
+        child: AutofillGroup(
+            child: Column(
+          children: [
+            const TextField(
+              autofillHints: [AutofillHints.username],
+              decoration: InputDecoration(hintText: "Username"),
+            ),
+            const TextField(
+              obscureText: true,
+              autofillHints: [AutofillHints.password],
+              decoration: InputDecoration(hintText: "Password"),
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  //--- trigger Password Save
+                  TextInput.finishAutofillContext();
+
+                  //--- OR ----
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) {
+                    return Panel();
+                  }));
+                },
+                child: const Text("Log In"))
+          ],
+        )),
+      ),
+    );
+  }
+}
+
+class Panel extends StatelessWidget {
+  const Panel({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Admin Panel"),
       ),
     );
   }
