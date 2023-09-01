@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:email_validator/email_validator.dart';
+
+import 'second_route.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
 
   @override
-  _LoginFormState createState() => _LoginFormState();
+  LoginFormState createState() => LoginFormState();
 }
 
-class _LoginFormState extends State<LoginForm> {
+class LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   String _email = '';
   String _password = '';
@@ -51,8 +52,13 @@ class _LoginFormState extends State<LoginForm> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SecondRoute()),
+                    );
                     print('Email: $_email, Password: $_password');
-                    TextInput.finishAutofillContext();
+                    //TextInput.finishAutofillContext();
                     print('finished finishAutofillContext()');
 
                     // Process login data
